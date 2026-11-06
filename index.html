@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fiche joueur macro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: scouting sheet. Left column names each step, right column holds the inputs; stacks on phones. */
+:root {
+  color-scheme: light;
+  --bg: #EEF1F4;
+  --surface: #FFFFFF;
+  --fg: #0F1B24;
+  --muted: #55646F;
+  --line: #CCD5DC;
+  --accent: #0B7A75;
+  --accent-fg: #FFFFFF;
+  --soft: #DCEFEE;
+  --gold: #8A5F0E;
+  --danger: #B3261E;
+  --font-display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1318;
+    --surface: #111F27;
+    --fg: #E6EEF1;
+    --muted: #8FA3AE;
+    --line: #26373F;
+    --accent: #3CC4BC;
+    --accent-fg: #04201E;
+    --soft: #12312F;
+    --gold: #D9A93F;
+    --danger: #F2928B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1318;
+  --surface: #111F27;
+  --fg: #E6EEF1;
+  --muted: #8FA3AE;
+  --line: #26373F;
+  --accent: #3CC4BC;
+  --accent-fg: #04201E;
+  --soft: #12312F;
+  --gold: #D9A93F;
+  --danger: #F2928B;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin: 0 auto; }
+header.hero { padding-bottom: 28px; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 10px;
+}
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(44px, 9vw, 84px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+.lede { max-width: 62ch; color: var(--muted); margin: 0 0 16px; font-size: 16px; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.meta b { color: var(--fg); font-weight: 500; }
+
+.sec {
+  display: grid;
+  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+  gap: 18px 44px;
+  padding-block: 30px;
+  border-top: 1px solid var(--line);
+}
+.sec-head { min-width: 0; }
+.step {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em;
+  color: var(--accent); margin: 0 0 4px;
+}
+.sec h2 {
+  font-family: var(--font-display); font-weight: 600; font-size: 28px;
+  line-height: 1.05; text-transform: uppercase; letter-spacing: 0.02em;
+  margin: 0 0 8px; text-wrap: balance;
+}
+.sec-head p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.sec-body { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+@media (max-width: 720px) { .sec { grid-template-columns: minmax(0, 1fr); } }
+
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.row2 > *, .field { min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+label.lbl, .legend {
+  font-size: 13px; font-weight: 600; color: var(--fg); padding: 0;
+}
+.opt { font-weight: 400; color: var(--muted); }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+input[type="text"], input[type="email"], select, textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+textarea { resize: vertical; min-height: 96px; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.75; }
+:is(input, select, textarea):focus-visible,
+.pick input:focus-visible + label,
+.seg input:focus-visible + label,
+details.fiche summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+[aria-invalid="true"] { border-color: var(--danger) !important; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.err { color: var(--danger); font-size: 12.5px; margin: 0; min-height: 0; }
+.err:empty { display: none; }
+
+.pick input, .seg input { position: absolute; opacity: 0; pointer-events: none; }
+.pick, .seg { position: relative; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips .pick label {
+  display: inline-block; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 6px; padding: 8px 14px; font-weight: 500; font-size: 14px;
+  transition: background-color .12s, border-color .12s;
+}
+.chips .pick input:checked + label {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-fg);
+}
+.chips .pick label:hover { border-color: var(--accent); }
+
+.pool {
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+  padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0;
+}
+.pool-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.pool-head b {
+  font-family: var(--font-display); font-size: 26px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1;
+}
+.pool-head span {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+.pool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.pool-grid .field.urg label.lbl { color: var(--gold); }
+.pool-grid .field.urg input { border-style: dashed; }
+.pool-note {
+  font-size: 13px; color: var(--muted); margin: 0; max-width: 62ch;
+}
+.pool-note b {
+  font-family: var(--font-mono); font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--gold);
+}
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.cards .pick label {
+  display: flex; flex-direction: column; gap: 4px; height: 100%; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 8px; padding: 14px;
+  transition: background-color .12s, border-color .12s;
+}
+.cards .pick label b { font-family: var(--font-display); font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; line-height: 1.1; }
+.cards .pick label span { font-size: 13px; color: var(--muted); }
+.cards .pick input:checked + label { border-color: var(--accent); background: var(--soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.cards .pick label:hover { border-color: var(--accent); }
+
+.def {
+  background: var(--soft); border-radius: 8px; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.def p { margin: 0; font-size: 14px; max-width: 62ch; }
+.def p.def-line { max-width: none; font-size: 15px; font-weight: 500; display: flex; flex-wrap: wrap; gap: 2px 10px; }
+.def-line b {
+  color: var(--accent); font-family: var(--font-display); font-weight: 600;
+  text-transform: uppercase; font-size: 19px; letter-spacing: 0.03em;
+}
+.def-line span { color: var(--muted); }
+.def-tag {
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent);
+}
+.skills { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.skill {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 230px);
+  gap: 8px 16px; align-items: center; padding: 10px 14px;
+}
+.skill + .skill { border-top: 1px solid var(--line); }
+.skill .name { font-weight: 500; font-size: 14px; }
+.skill .name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.seg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.seg label {
+  display: block; text-align: center; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 5px; padding: 6px 0;
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+  background: var(--bg);
+}
+.seg input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 500; }
+.scale { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); letter-spacing: 0.03em; }
+@media (max-width: 560px) { .skill { grid-template-columns: minmax(0, 1fr); } }
+
+.checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.checks .pick label {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 999px; padding: 7px 14px; font-size: 13.5px;
+}
+.checks .pick label::before {
+  content: ""; width: 12px; height: 12px; border-radius: 3px;
+  border: 1.5px solid var(--muted); flex: none;
+}
+.checks .pick input:checked + label { background: var(--soft); border-color: var(--accent); }
+.checks .pick input:checked + label::before { background: var(--accent); border-color: var(--accent); }
+
+.submit-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+}
+button {
+  font: inherit; cursor: pointer; border-radius: 6px; padding: 12px 22px; font-weight: 600;
+}
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); color: var(--accent-fg); border: 1px solid var(--accent); }
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+.btn-ghost:hover { border-color: var(--accent); }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--line); }
+.btn-danger:hover { border-color: var(--danger); }
+.submit-bar p { margin: 0; font-size: 12.5px; color: var(--muted); max-width: 46ch; }
+
+.summary-err {
+  border: 1px solid var(--danger); border-radius: 8px; padding: 12px 16px;
+  margin-bottom: 8px; background: var(--surface);
+}
+.summary-err h3 { margin: 0 0 6px; font-size: 14px; color: var(--danger); }
+.summary-err ul { margin: 0; padding-left: 18px; font-size: 13.5px; }
+.summary-err a { color: var(--fg); }
+
+#done .banner {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 12px;
+}
+#done h2 {
+  font-family: var(--font-display); text-transform: uppercase; font-size: clamp(32px, 6vw, 48px);
+  line-height: 1; margin: 0; font-weight: 700;
+}
+#done .tag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+.save { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+pre.recap {
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.65;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 16px; margin: 0 0 16px; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.state { font-size: 13px; color: var(--muted); }
+
+/* Affichage structuré d'une fiche (joueur et coach) */
+.rf {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 16px; min-width: 0;
+}
+#coach .rf { border: 0; border-radius: 0; padding: 4px 0 8px; margin-bottom: 0; }
+.rf-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.rf-who {
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(30px, 6vw, 44px); line-height: 1; letter-spacing: 0.01em;
+}
+.rf-pseudo { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+.rf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-block; font-size: 12.5px; padding: 3px 10px; border: 1px solid var(--line);
+  border-radius: 999px; background: var(--bg); color: var(--fg); overflow-wrap: anywhere;
+}
+.chip.strong { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.chip.main { background: var(--soft); border-color: var(--accent); font-weight: 500; }
+.chip.urg { border-style: dashed; color: var(--gold); }
+.chip.empty { color: var(--muted); }
+.rf-sec { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
+.rf-label {
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.rf-sub { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.rf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.rf-role, .rf-panel {
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+  background: var(--bg); min-width: 0; display: flex; flex-direction: column; gap: 8px;
+}
+.rf-role-head, .rf-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rf-role-head b, .rf-panel-head b {
+  font-family: var(--font-display); font-size: 22px; text-transform: uppercase; font-weight: 600; line-height: 1.1;
+}
+.rf-role-head span {
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+.rf-panel-head span { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.rf-row { display: grid; grid-template-columns: minmax(0, 1fr) 78px 18px; gap: 10px; align-items: center; font-size: 13px; }
+.rf-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.rf-bar i { height: 8px; border-radius: 2px; background: var(--line); display: block; }
+.rf-bar i.on { background: var(--accent); }
+.rf-row.low .rf-bar i.on { background: var(--gold); }
+.rf-row.low .rf-name, .rf-row.low .rf-val { color: var(--gold); font-weight: 600; }
+.rf-val { font-family: var(--font-mono); text-align: right; }
+.rf-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rf-block > b { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.rf-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
+
+#coach {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 8px; padding: 18px; margin-bottom: 28px;
+}
+.coach-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; }
+.coach-head h2 {
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  font-size: 30px; line-height: 1; margin: 0;
+}
+.coach-head .count { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+#coachEmpty { color: var(--muted); font-size: 13.5px; margin: 14px 0 0; }
+#coachList { margin-top: 12px; }
+details.fiche { border-top: 1px solid var(--line); }
+details.fiche summary {
+  cursor: pointer; padding: 12px 0; list-style: none;
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto; gap: 2px 16px; align-items: baseline;
+}
+details.fiche summary::-webkit-details-marker { display: none; }
+details.fiche summary .who { font-weight: 600; }
+details.fiche summary .who i { font-style: normal; font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-left: 8px; font-weight: 400; }
+details.fiche summary .what { font-size: 13.5px; color: var(--muted); }
+details.fiche summary .when { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+details.fiche[open] summary .who { color: var(--accent); }
+@media (max-width: 640px) { details.fiche summary { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Préparation compétition · Staff analytique</p>
+    <h1>Fiche joueur</h1>
+    <p class="lede">Ce questionnaire sert à construire ta fiche personnelle : rappel des bases du jeu, puis la théorie macro à ton rythme pour les prochains mois. Plus tu es précis, plus la fiche te ressemble.</p>
+    <div class="meta"><span><b>8</b> membres officiels</span><span><b>7</b> sections</span><span>Durée : <b>5 min</b></span></div>
+  </header>
+
+  <form id="fiche" novalidate>
+    <div id="errors" tabindex="-1" aria-live="polite"></div>
+    <input type="checkbox" id="botcheck" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">01</p>
+        <h2>Identité</h2>
+        <p>Pour nommer ta fiche et te situer dans l'équipe.</p>
+      </div>
+      <div class="sec-body">
+        <div class="row2">
+          <div class="field">
+            <label class="lbl" for="prenom">Prénom</label>
+            <input type="text" id="prenom" autocomplete="given-name" placeholder="ex. Camille">
+          </div>
+          <div class="field">
+            <label class="lbl" for="nom">Nom</label>
+            <input type="text" id="nom" autocomplete="family-name" placeholder="ex. Durand">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label class="lbl" for="pseudo">Pseudo en jeu</label>
+            <input type="text" id="pseudo" placeholder="ex. Camdu75">
+          </div>
+          <div class="field">
+            <label class="lbl" for="email">Email <span class="opt">(facultatif)</span></label>
+            <input type="email" id="email" autocomplete="email" placeholder="toi@exemple.fr">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label class="lbl" for="statut">Place dans l'équipe</label>
+            <select id="statut">
+              <option value="">Choisir…</option>
+              <option>Titulaire</option>
+              <option>Remplaçant</option>
+              <option>Entraîneur low elo</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="lbl" for="niveau">Niveau du compte <span class="opt">(facultatif)</span></label>
+            <input type="text" id="niveau" inputmode="numeric" placeholder="ex. 215">
+            <p class="err" id="err-niveau"></p>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label class="lbl" for="rang">Rang solo/duo <span class="opt">(facultatif)</span></label>
+            <select id="rang"><option value="">Pas de classement</option></select>
+            <p class="hint">Laisse vide si tu ne joues pas en classé.</p>
+          </div>
+          <div class="field">
+            <label class="lbl" for="flex">Rang flex <span class="opt">(facultatif)</span></label>
+            <select id="flex"><option value="">Pas de classement</option></select>
+            <p class="hint">Aide le staff à estimer ton aisance en jeu d'équipe.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">02</p>
+        <h2>Rôles</h2>
+        <p>Le rôle principal et le rôle que tu peux tenir en cas de besoin.</p>
+      </div>
+      <div class="sec-body">
+        <fieldset id="fs-role1">
+          <legend class="legend">Rôle principal</legend>
+          <div class="chips" id="role1"></div>
+          <p class="err" id="err-role1"></p>
+        </fieldset>
+        <fieldset id="fs-role2">
+          <legend class="legend">Rôle secondaire</legend>
+          <div class="chips" id="role2"></div>
+          <p class="err" id="err-role2"></p>
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">03</p>
+        <h2>Champions</h2>
+        <p>Deux mains par rôle, plus un champion pour le cas d'urgence. La fiche s'appuiera sur ce pool pour illustrer la macro.</p>
+      </div>
+      <div class="sec-body">
+        <p class="pool-note"><b>Cas d'urgence</b> : la troisième case de chaque rôle accueille le champion que tu sortirais si tes deux mains sont bannies ou déjà prises. Elle reste facultative.</p>
+
+        <div class="pool">
+          <div class="pool-head"><b id="pool-name1">Rôle à choisir</b><span>Rôle principal</span></div>
+          <div class="pool-grid">
+            <div class="field">
+              <label class="lbl" for="p1">Main n°1</label>
+              <input type="text" id="p1" placeholder="Champion">
+            </div>
+            <div class="field">
+              <label class="lbl" for="p2">Main n°2</label>
+              <input type="text" id="p2" placeholder="Champion">
+            </div>
+            <div class="field urg">
+              <label class="lbl" for="p3">Cas d'urgence</label>
+              <input type="text" id="p3" placeholder="Champion (facultatif)">
+            </div>
+          </div>
+          <p class="err" id="err-pool1"></p>
+        </div>
+
+        <div class="pool">
+          <div class="pool-head"><b id="pool-name2">Rôle à choisir</b><span>Rôle secondaire</span></div>
+          <div class="pool-grid">
+            <div class="field">
+              <label class="lbl" for="s1">Main n°1</label>
+              <input type="text" id="s1" placeholder="Champion">
+            </div>
+            <div class="field">
+              <label class="lbl" for="s2">Main n°2</label>
+              <input type="text" id="s2" placeholder="Champion">
+            </div>
+            <div class="field urg">
+              <label class="lbl" for="s3">Cas d'urgence</label>
+              <input type="text" id="s3" placeholder="Champion (facultatif)">
+            </div>
+          </div>
+          <p class="err" id="err-pool2"></p>
+        </div>
+
+        <div class="field">
+          <label class="lbl" for="redoute">Champion que tu redoutes d'affronter <span class="opt">(facultatif)</span></label>
+          <input type="text" id="redoute" placeholder="ex. un champion qui te met en difficulté en phase de lane">
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">04</p>
+        <h2>Niveau en micro</h2>
+        <p>Ton exécution individuelle, partie après partie.</p>
+      </div>
+      <div class="sec-body">
+        <div class="def">
+          <span class="def-tag">Définition</span>
+          <p class="def-line"><b>Micro</b> = gestion mécanique de son personnage <span>/</span> <b>Macro</b> = gestion de l'ensemble des choix faits sur la map</p>
+          <p>La <b>micro</b>, c'est tout ce que tu fais avec ton propre champion, à l'échelle de quelques secondes : last hit, espacement, esquive des sorts, combos, déplacements, usage des sorts d'invocateur. Elle se distingue de la <b>macro</b>, qui regroupe les décisions de map et d'équipe : où aller, quand, pourquoi.</p>
+        </div>
+        <div class="skills" id="micro"></div>
+        <div class="scale"><span>1 · à découvrir</span><span>5 · solide</span></div>
+        <div class="field">
+          <label class="lbl" for="micro_prio">Ce que tu voudrais le plus améliorer en micro <span class="opt">(facultatif)</span></label>
+          <textarea id="micro_prio" placeholder="ex. mes combos sous pression, l'esquive des sorts en lane"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">05</p>
+        <h2>Niveau en macro</h2>
+        <p>Les décisions de map et d'équipe. Note-toi honnêtement : la fiche insistera sur les points les plus bas.</p>
+      </div>
+      <div class="sec-body">
+        <div class="skills" id="skills"></div>
+        <div class="scale"><span>1 · à découvrir</span><span>5 · solide</span></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">06</p>
+        <h2>Envie théorique</h2>
+        <p>À quel point ta fiche doit-elle être détaillée, et sur quoi.</p>
+      </div>
+      <div class="sec-body">
+        <fieldset id="fs-depth">
+          <legend class="legend">Niveau de détail souhaité</legend>
+          <div class="cards" id="depth"></div>
+          <p class="err" id="err-depth"></p>
+        </fieldset>
+        <fieldset>
+          <legend class="legend">Notions de macro à approfondir <span class="opt">(plusieurs choix possibles)</span></legend>
+          <div class="checks" id="themes"></div>
+        </fieldset>
+        <fieldset>
+          <legend class="legend">Formats qui t'aident à retenir <span class="opt">(facultatif)</span></legend>
+          <div class="checks" id="formats"></div>
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head">
+        <p class="step">07</p>
+        <h2>Commentaires</h2>
+        <p>Tout ce qui permet au coach de mieux t'accompagner.</p>
+      </div>
+      <div class="sec-body">
+        <div class="field">
+          <label class="lbl" for="faiblesses">Ce qui te fait perdre le plus de parties <span class="opt">(facultatif)</span></label>
+          <textarea id="faiblesses" placeholder="ex. je prends de mauvais combats quand mon jungler n'est pas là"></textarea>
+        </div>
+        <div class="field">
+          <label class="lbl" for="demandes">Tes demandes pour la fiche ou pour le staff <span class="opt">(facultatif)</span></label>
+          <textarea id="demandes" placeholder="ex. un rappel sur les timers des objectifs neutres, des exemples sur ma main"></textarea>
+        </div>
+        <div class="field">
+          <label class="lbl" for="comm">Autre commentaire <span class="opt">(facultatif)</span></label>
+          <textarea id="comm"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="submit-bar">
+      <button type="submit" class="btn-primary">Valider mes réponses</button>
+      <p>Les champs obligatoires sont : prénom, nom, pseudo, les deux rôles, les deux mains de chaque rôle et le niveau de détail. Tes réponses sont envoyées par mail à ton coach.</p>
+    </div>
+  </form>
+
+  <section id="done" hidden>
+    <div class="banner">
+      <span class="tag">Réponses validées</span>
+      <h2 id="doneTitle">Récapitulatif</h2>
+    </div>
+    <p class="save" id="saveState" role="status"></p>
+    <div id="recapView"></div>
+    <div class="actions">
+      <button type="button" class="btn-primary" id="copyBtn">Copier le récapitulatif</button>
+      <button type="button" class="btn-ghost" id="editBtn">Modifier mes réponses</button>
+      <span class="state" id="copyState" role="status"></span>
+    </div>
+  </section>
+</div>
+
+<script>
+/* À renseigner : clé d'accès Web3Forms, reçue par mail sur web3forms.com */
+var ACCESS_KEY = "1736b314-ddac-4b52-a401-34b38ea8507c";
+(function () {
+  var ROLES = ["Top", "Jungle", "Mid", "ADC", "Support"];
+  var RANKS = ["Fer", "Bronze", "Argent", "Or", "Platine", "Émeraude", "Diamant", "Maître", "Grand Maître", "Challenger"];
+  var SKILLS = [
+    ["laning", "Phase de lane", "plan de lane, résistance, pression"],
+    ["wave", "Gestion des vagues", "freeze, slow push, reset"],
+    ["vision", "Vision et contrôle de map", "wards, balayage, zones de contrôle"],
+    ["obj", "Objectifs neutres", "dragons, Héraut, Nashor, timers"],
+    ["rota", "Rotations et tempo", "quand bouger, quand rester"],
+    ["tf", "Teamfights", "positionnement, cibles, engage"],
+    ["comm", "Communication", "appels clairs, infos utiles"],
+    ["mental", "Gestion du mental", "tilt, retour dans la partie"]
+  ];
+  var MICRO = [
+    ["lasthit", "Last hit et farm", "sbires, canons, régularité du CS"],
+    ["trades", "Trades et espacement", "portée, échanges de coups, auto-attaques utiles"],
+    ["dodge", "Esquive des sorts", "skillshots, zones au sol"],
+    ["combos", "Combos et enchaînements", "ordre des sorts, exécution sous pression"],
+    ["kite", "Kiting et déplacements", "attaquer en reculant, fluidité des clics"],
+    ["spells", "Sorts d'invocateur et objets actifs", "usage et suivi des temps de recharge"],
+    ["fightpos", "Placement individuel en combat", "distance, angles, éviter les dégâts inutiles"],
+    ["champ", "Maîtrise de tes champions", "portées, timings, particularités"]
+  ];
+  var DEPTH = [
+    ["essentiel", "Essentiel", "1 à 2 pages. Les bases à retenir, sans détour."],
+    ["approfondi", "Approfondi", "4 à 6 pages. Bases et théorie macro avec exemples."],
+    ["exhaustif", "Exhaustif", "Dossier complet avec cas d'étude et exercices."]
+  ];
+  var THEMES = ["Gestion des vagues", "Contrôle de vision", "Tempo et rotations", "Objectifs neutres", "Side lanes et split push", "Draft et compositions", "Teamfights et positionnement", "Conditions de victoire", "Revenir dans une partie perdue"];
+  var FORMATS = ["Schémas de map", "Checklists", "Exemples de VOD", "Exercices pratiques", "Glossaire"];
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function pick(container, type, name, value, idx, labelHtml) {
+    var wrap = document.createElement("div");
+    wrap.className = "pick";
+    var id = name + "-" + idx;
+    var input = document.createElement("input");
+    input.type = type; input.name = name; input.value = value; input.id = id;
+    var label = document.createElement("label");
+    label.setAttribute("for", id);
+    if (labelHtml) { label.innerHTML = labelHtml; } else { label.textContent = value; }
+    wrap.appendChild(input); wrap.appendChild(label);
+    container.appendChild(wrap);
+  }
+  ROLES.forEach(function (r, i) { pick($("role1"), "radio", "role1", r, i); pick($("role2"), "radio", "role2", r, i); });
+  DEPTH.forEach(function (d, i) { pick($("depth"), "radio", "depth", d[1], i, "<b>" + d[1] + "</b><span>" + d[2] + "</span>"); });
+  THEMES.forEach(function (t, i) { pick($("themes"), "checkbox", "theme", t, i); });
+  FORMATS.forEach(function (t, i) { pick($("formats"), "checkbox", "format", t, i); });
+
+  ["rang", "flex"].forEach(function (id) {
+    RANKS.forEach(function (r) { var o = document.createElement("option"); o.textContent = r; $(id).appendChild(o); });
+  });
+
+  function buildSkills(list, prefix, container) {
+  list.forEach(function (s) {
+    var row = document.createElement("div");
+    row.className = "skill";
+    var name = document.createElement("div");
+    name.className = "name";
+    name.textContent = s[1];
+    var small = document.createElement("small");
+    small.textContent = s[2];
+    name.appendChild(small);
+    var seg = document.createElement("div");
+    seg.className = "seg";
+    seg.setAttribute("role", "radiogroup");
+    seg.setAttribute("aria-label", s[1]);
+    for (var n = 1; n <= 5; n++) {
+      var w = document.createElement("div");
+      w.className = "pick";
+      var id = prefix + s[0] + "-" + n;
+      var inp = document.createElement("input");
+      inp.type = "radio"; inp.name = prefix + s[0]; inp.value = n; inp.id = id;
+      var lab = document.createElement("label");
+      lab.setAttribute("for", id); lab.textContent = n;
+      w.appendChild(inp); w.appendChild(lab);
+      seg.appendChild(w);
+    }
+    row.appendChild(name); row.appendChild(seg);
+    container.appendChild(row);
+  });
+  }
+  buildSkills(SKILLS, "sk-", $("skills"));
+  buildSkills(MICRO, "mi-", $("micro"));
+
+  function val(id) { return ($(id).value || "").trim(); }
+  function radio(name) { var e = document.querySelector('input[name="' + name + '"]:checked'); return e ? e.value : ""; }
+  function many(name) {
+    return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (e) { return e.value; });
+  }
+
+  function refreshPools() {
+    $("pool-name1").textContent = radio("role1") || "Rôle à choisir";
+    $("pool-name2").textContent = radio("role2") || "Rôle à choisir";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="role1"], input[name="role2"]'), function (el) {
+    el.addEventListener("change", refreshPools);
+  });
+
+  function validate() {
+    var errs = [];
+    ["prenom", "nom", "pseudo", "email", "niveau", "p1", "p2", "s1", "s2"].forEach(function (id) { $(id).removeAttribute("aria-invalid"); });
+    ["role1", "role2", "depth", "pool1", "pool2", "niveau"].forEach(function (k) { $("err-" + k).textContent = ""; });
+    var labels = { prenom: "Prénom", nom: "Nom", pseudo: "Pseudo en jeu" };
+    ["prenom", "nom", "pseudo"].forEach(function (id) {
+      if (!val(id)) { errs.push({ id: id, msg: labels[id] + " est à renseigner." }); $(id).setAttribute("aria-invalid", "true"); }
+    });
+    var nv = val("niveau");
+    if (nv && !/^\d{1,4}$/.test(nv)) {
+      errs.push({ id: "niveau", msg: "Le niveau du compte doit être un nombre." });
+      $("niveau").setAttribute("aria-invalid", "true");
+      $("err-niveau").textContent = "Le niveau du compte doit être un nombre.";
+    }
+    if (!radio("role1")) { errs.push({ id: "role1-0", msg: "Choisis ton rôle principal." }); $("err-role1").textContent = "Choisis ton rôle principal."; }
+    if (!radio("role2")) { errs.push({ id: "role2-0", msg: "Choisis ton rôle secondaire." }); $("err-role2").textContent = "Choisis ton rôle secondaire."; }
+    else if (radio("role1") && radio("role1") === radio("role2")) {
+      errs.push({ id: "role2-0", msg: "Le rôle secondaire doit être différent du rôle principal." });
+      $("err-role2").textContent = "Le rôle secondaire doit être différent du rôle principal.";
+    }
+    [["1", "p", "principal"], ["2", "s", "secondaire"]].forEach(function (c) {
+      var a = c[1] + "1", b = c[1] + "2";
+      if (!val(a) || !val(b)) {
+        var r = radio("role" + c[0]);
+        var m = "Indique tes deux mains" + (r ? " en " + r : " du rôle " + c[2]) + ".";
+        errs.push({ id: !val(a) ? a : b, msg: m });
+        $("err-pool" + c[0]).textContent = m;
+        if (!val(a)) $(a).setAttribute("aria-invalid", "true");
+        if (!val(b)) $(b).setAttribute("aria-invalid", "true");
+      }
+    });
+    if (!radio("depth")) { errs.push({ id: "depth-0", msg: "Choisis le niveau de détail de ta fiche." }); $("err-depth").textContent = "Choisis le niveau de détail de ta fiche."; }
+    var em = val("email");
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      errs.push({ id: "email", msg: "L'adresse email n'est pas valide." }); $("email").setAttribute("aria-invalid", "true");
+    }
+    return errs;
+  }
+
+  function showErrors(errs) {
+    var box = $("errors");
+    box.textContent = "";
+    if (!errs.length) return;
+    var wrap = document.createElement("div");
+    wrap.className = "summary-err";
+    var h = document.createElement("h3");
+    h.textContent = errs.length === 1 ? "Il reste 1 point à corriger" : "Il reste " + errs.length + " points à corriger";
+    var ul = document.createElement("ul");
+    errs.forEach(function (e) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#"; a.textContent = e.msg;
+      a.addEventListener("click", function (ev) { ev.preventDefault(); var t = $(e.id); if (t) { t.focus(); t.scrollIntoView({ block: "center" }); } });
+      li.appendChild(a); ul.appendChild(li);
+    });
+    wrap.appendChild(h); wrap.appendChild(ul); box.appendChild(wrap);
+    box.focus();
+    box.scrollIntoView({ block: "start" });
+  }
+
+  function poolLine(label, role, a, b, c) {
+    var s = label + " (" + role + ") : " + [a, b].filter(Boolean).join(", ");
+    if (c) s += " | urgence : " + c;
+    return s;
+  }
+
+  function buildRecap() {
+    var L = [];
+    L.push("FICHE JOUEUR : " + val("prenom") + " " + val("nom") + " (" + val("pseudo") + ")");
+    L.push("");
+    var id = [];
+    if (val("statut")) id.push("Place : " + val("statut"));
+    if (val("niveau")) id.push("Niveau du compte : " + val("niveau"));
+    if (val("rang")) id.push("Solo/duo : " + val("rang"));
+    if (val("flex")) id.push("Flex : " + val("flex"));
+    if (val("email")) id.push("Email : " + val("email"));
+    if (id.length) L.push(id.join("  |  "));
+    L.push(poolLine("Rôle principal", radio("role1"), val("p1"), val("p2"), val("p3")));
+    L.push(poolLine("Rôle secondaire", radio("role2"), val("s1"), val("s2"), val("s3")));
+    if (val("redoute")) L.push("Champion redouté : " + val("redoute"));
+    var sk = [];
+    SKILLS.forEach(function (s) { var v = radio("sk-" + s[0]); if (v) sk.push(s[1] + " " + v + "/5"); });
+    var mk = [];
+    MICRO.forEach(function (s) { var v = radio("mi-" + s[0]); if (v) mk.push(s[1] + " " + v + "/5"); });
+    if (mk.length || val("micro_prio")) L.push("");
+    if (mk.length) L.push("Niveau micro ressenti : " + mk.join(" · "));
+    if (val("micro_prio")) L.push("Priorité micro : " + val("micro_prio"));
+    if (sk.length) { L.push(""); L.push("Niveau macro ressenti : " + sk.join(" · ")); }
+    L.push("");
+    L.push("Détail souhaité : " + radio("depth"));
+    var th = many("theme");
+    if (th.length) L.push("Notions à approfondir : " + th.join(", "));
+    var fm = many("format");
+    if (fm.length) L.push("Formats préférés : " + fm.join(", "));
+    var blocks = [["Ce qui fait perdre des parties", "faiblesses"], ["Demandes", "demandes"], ["Commentaire", "comm"]];
+    var any = blocks.some(function (b) { return val(b[1]); });
+    if (any) L.push("");
+    blocks.forEach(function (b) { if (val(b[1])) L.push(b[0] + " : " + val(b[1])); });
+    return L.join("\n");
+  }
+
+  function save(data) {
+    if ($("botcheck").checked) return Promise.resolve(true);
+    if (!ACCESS_KEY || ACCESS_KEY.indexOf("COLLE_ICI") === 0) return Promise.resolve(false);
+    var body = {
+      access_key: ACCESS_KEY,
+      subject: "Fiche joueur : " + data.prenom + " " + data.nom + " (" + data.pseudo + ")",
+      name: data.prenom + " " + data.nom,
+      pseudo: data.pseudo,
+      "role principal": data.role1,
+      "role secondaire": data.role2,
+      "detail souhaite": data.depth,
+      fiche: data.recap
+    };
+    if (data.fiche && data.fiche.email) body.email = data.fiche.email;
+    return fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function (r) { return r.status === 200; })
+      .catch(function () { return false; });
+  }
+
+  function copyText(text, node, setState) {
+    function fb() {
+      try {
+        var r = document.createRange(); r.selectNodeContents(node);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      } catch (e) {}
+      setState("Sélectionné : copie avec Ctrl+C.");
+    }
+    try { navigator.clipboard.writeText(text).then(function () { setState("Copié."); }, fb); }
+    catch (err) { fb(); }
+  }
+
+  var lastRecap = "";
+  function h(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function scoreMap(list, prefix) {
+    var o = {};
+    list.forEach(function (s) { var v = Number(radio(prefix + s[0])); if (v) o[s[0]] = v; });
+    return o;
+  }
+  function collect() {
+    return {
+      prenom: val("prenom"), nom: val("nom"), pseudo: val("pseudo"), email: val("email"),
+      statut: val("statut"), niveau: val("niveau"), rang: val("rang"), flex: val("flex"),
+      role1: radio("role1"), role2: radio("role2"),
+      pool1: [val("p1"), val("p2"), val("p3")], pool2: [val("s1"), val("s2"), val("s3")],
+      redoute: val("redoute"),
+      micro: scoreMap(MICRO, "mi-"), macro: scoreMap(SKILLS, "sk-"), microPrio: val("micro_prio"),
+      depth: radio("depth"), themes: many("theme"), formats: many("format"),
+      faiblesses: val("faiblesses"), demandes: val("demandes"), comm: val("comm")
+    };
+  }
+  function chip(text, cls) { return h("span", "chip" + (cls ? " " + cls : ""), text); }
+  function rfSection(label) { var s = h("div", "rf-sec"); s.appendChild(h("div", "rf-label", label)); return s; }
+  function textBlock(label, text) {
+    var b = h("div", "rf-block");
+    b.appendChild(h("b", null, label));
+    b.appendChild(h("p", "rf-text", text));
+    return b;
+  }
+  function rolePanel(role, kind, pool) {
+    var p = h("div", "rf-role");
+    var head = h("div", "rf-role-head");
+    head.appendChild(h("b", null, role || "Rôle non choisi"));
+    head.appendChild(h("span", null, kind));
+    p.appendChild(head);
+    var chips = h("div", "rf-chips");
+    (pool || []).slice(0, 2).forEach(function (c) { if (c) chips.appendChild(chip(c, "main")); });
+    if (pool && pool[2]) chips.appendChild(chip("Urgence : " + pool[2], "urg"));
+    if (!chips.childNodes.length) chips.appendChild(chip("Aucun champion", "empty"));
+    p.appendChild(chips);
+    return p;
+  }
+  function ratingPanel(title, list, map) {
+    var p = h("div", "rf-panel");
+    var vals = list.map(function (s) { return Number(map && map[s[0]]) || 0; });
+    var rated = vals.filter(Boolean);
+    var head = h("div", "rf-panel-head");
+    head.appendChild(h("b", null, title));
+    var avg = rated.length
+      ? "moy. " + (rated.reduce(function (a, b) { return a + b; }, 0) / rated.length).toFixed(1).replace(".", ",") + " / 5"
+      : "non renseigné";
+    head.appendChild(h("span", null, avg));
+    p.appendChild(head);
+    list.forEach(function (s, i) {
+      var v = vals[i];
+      var row = h("div", "rf-row" + (v && v <= 2 ? " low" : ""));
+      row.appendChild(h("span", "rf-name", s[1]));
+      var bar = h("span", "rf-bar");
+      for (var n = 1; n <= 5; n++) bar.appendChild(h("i", n <= v ? "on" : ""));
+      row.appendChild(bar);
+      row.appendChild(h("span", "rf-val", v ? String(v) : "-"));
+      row.setAttribute("title", s[1] + " : " + (v ? v + " sur 5" : "non noté"));
+      p.appendChild(row);
+    });
+    return p;
+  }
+  function renderFiche(f) {
+    var card = h("div", "rf");
+    var head = h("div", "rf-head");
+    head.appendChild(h("div", "rf-who", ((f.prenom || "") + " " + (f.nom || "")).trim()));
+    if (f.pseudo) head.appendChild(h("span", "rf-pseudo", f.pseudo));
+    card.appendChild(head);
+    var meta = h("div", "rf-chips");
+    [f.statut, f.niveau ? "Niveau " + f.niveau : "", f.rang ? "Solo/duo " + f.rang : "", f.flex ? "Flex " + f.flex : "", f.email]
+      .forEach(function (t) { if (t) meta.appendChild(chip(t)); });
+    if (meta.childNodes.length) card.appendChild(meta);
+
+    var s1 = rfSection("Rôles et champions");
+    var g1 = h("div", "rf-grid");
+    g1.appendChild(rolePanel(f.role1, "Principal", f.pool1));
+    g1.appendChild(rolePanel(f.role2, "Secondaire", f.pool2));
+    s1.appendChild(g1);
+    if (f.redoute) s1.appendChild(textBlock("Champion redouté", f.redoute));
+    card.appendChild(s1);
+
+    var s2 = rfSection("Auto-évaluation (en doré : note de 1 ou 2, à travailler)");
+    var g2 = h("div", "rf-grid");
+    g2.appendChild(ratingPanel("Micro", MICRO, f.micro));
+    g2.appendChild(ratingPanel("Macro", SKILLS, f.macro));
+    s2.appendChild(g2);
+    if (f.microPrio) s2.appendChild(textBlock("À améliorer en micro en priorité", f.microPrio));
+    card.appendChild(s2);
+
+    var s3 = rfSection("Envie théorique");
+    var d = h("div", "rf-chips");
+    d.appendChild(chip(f.depth || "Détail non choisi", "strong"));
+    s3.appendChild(d);
+    [["Notions à approfondir", f.themes], ["Formats préférés", f.formats]].forEach(function (g) {
+      if (g[1] && g[1].length) {
+        s3.appendChild(h("div", "rf-sub", g[0]));
+        var c = h("div", "rf-chips");
+        g[1].forEach(function (t) { c.appendChild(chip(t)); });
+        s3.appendChild(c);
+      }
+    });
+    card.appendChild(s3);
+
+    var texts = [["Ce qui fait perdre des parties", f.faiblesses], ["Demandes", f.demandes], ["Autre commentaire", f.comm]]
+      .filter(function (t) { return t[1]; });
+    if (texts.length) {
+      var s4 = rfSection("Commentaires");
+      texts.forEach(function (t) { s4.appendChild(textBlock(t[0], t[1])); });
+      card.appendChild(s4);
+    }
+    return card;
+  }
+
+  $("fiche").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var errs = validate();
+    showErrors(errs);
+    if (errs.length) return;
+    var recap = buildRecap();
+    var fiche = collect();
+    lastRecap = recap;
+    $("recapView").textContent = "";
+    $("recapView").appendChild(renderFiche(fiche));
+    $("doneTitle").textContent = val("prenom") + ", merci";
+    $("saveState").textContent = "Envoi en cours…";
+    $("fiche").hidden = true;
+    $("done").hidden = false;
+    window.scrollTo(0, 0);
+    save({
+      prenom: val("prenom"), nom: val("nom"), pseudo: val("pseudo"),
+      statut: val("statut"), role1: radio("role1"), role2: radio("role2"),
+      depth: radio("depth"), recap: recap, fiche: fiche, at: new Date().toISOString()
+    }).then(function (ok) {
+      $("saveState").textContent = ok
+        ? "Ta fiche a été envoyée à ton coach."
+        : "L'envoi n'a pas abouti. Copie le récapitulatif ci-dessous et envoie-le à ton coach.";
+    });
+  });
+
+  $("editBtn").addEventListener("click", function () {
+    $("done").hidden = true; $("fiche").hidden = false; $("copyState").textContent = "";
+    window.scrollTo(0, 0);
+  });
+
+  $("copyBtn").addEventListener("click", function () {
+    copyText(lastRecap, $("recapView"), function (m) { $("copyState").textContent = m; });
+  });
+
+})();
+</script>
+</body>
+</html>
